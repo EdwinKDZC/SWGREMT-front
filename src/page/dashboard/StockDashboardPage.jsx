@@ -20,7 +20,6 @@ const StockDashboardPage = () => {
   // Guardar productos actualizados en localStorage
   useEffect(() => {
     if (products.length > 0) {
-      console.log("Guardando productos en localStorage:", products);
       localStorage.setItem("products", JSON.stringify(products));
     }
   }, [products]);
@@ -28,7 +27,6 @@ const StockDashboardPage = () => {
   // Guardar transacciones en localStorage
   useEffect(() => {
     if (stockTransactions.length > 0) {
-      console.log("Guardando movimientos en localStorage:", stockTransactions);
       localStorage.setItem("stockTransactions", JSON.stringify(stockTransactions));
     }
   }, [stockTransactions]);
@@ -79,6 +77,23 @@ const StockDashboardPage = () => {
     setSelectedType("");
     setSelectedModel("");
     setSelectedQuality("");
+  };
+
+  // Calcular el stock actual con las transacciones
+  const getStockActual = (productId) => {
+    const product = products.find((prod) => prod.id === productId);
+
+    if (!product) return 0;
+
+    const totalIn = stockTransactions
+      .filter((transaction) => transaction.productId === productId && transaction.type === "Ingreso")
+      .reduce((acc, transaction) => acc + transaction.quantity, 0);
+
+    const totalOut = stockTransactions
+      .filter((transaction) => transaction.productId === productId && transaction.type === "Salida")
+      .reduce((acc, transaction) => acc + transaction.quantity, 0);
+
+    return product.cantidadActual + totalIn - totalOut;  // Calculamos el stock actual
   };
 
   return (
@@ -202,15 +217,40 @@ const StockDashboardPage = () => {
               const product = products.find((p) => p.id === transaction.productId);
               return (
                 <tr key={transaction.id} className="border-t">
-                <td className="p-2">{product?.type}</td>
-                <td className="p-2">{product?.model}</td>
-                <td className="p-2">{product?.quality}</td>
-                <td className="p-2">{transaction.type}</td>
-                <td className="p-2">{transaction.quantity}</td>
-                <td className="p-2">{transaction.date}</td>
+                  <td className="p-2">{product?.type}</td>
+                  <td className="p-2">{product?.model}</td>
+                  <td className="p-2">{product?.quality}</td>
+                  <td className="p-2">{transaction.type}</td>
+                  <td className="p-2">{transaction.quantity}</td>
+                  <td className="p-2">{transaction.date}</td>
                 </tr>
               );
             })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Tabla de stock actual */}
+      <div className="mt-8">
+        <h3 className="text-lg font-bold mb-4">Stock Actual de Productos</h3>
+        <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
+          <thead className="bg-blue-800 text-white">
+            <tr>
+              <th className="p-2">Tipo</th>
+              <th className="p-2">Modelo</th>
+              <th className="p-2">Calidad</th>
+              <th className="p-2">Stock Actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id} className="border-t">
+                <td className="p-2">{product.type}</td>
+                <td className="p-2">{product.model}</td>
+                <td className="p-2">{product.quality}</td>
+                <td className="p-2">{getStockActual(product.id)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

@@ -82,7 +82,7 @@ const HomeDashboardPage = () => {
                 <td className="p-2">${product.purchasePrice}</td>
                 <td className="p-2">${product.salePrice}</td>
                 <td className="p-2">{product.type}</td>
-                <td className="p-2">{product.quantity}</td>
+                <td className="p-2">{product.cantidadactual}</td>
               </tr>
             ))}
             {filteredProducts.length === 0 && (
