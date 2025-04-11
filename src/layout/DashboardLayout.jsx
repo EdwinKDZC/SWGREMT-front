@@ -1,14 +1,16 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import NavbarDashboardComponent from '../components/dashboard/NavbarDashboardComponent'
+import SidebarDashboardComponent from '../components/dashboard/SidebarDashboardComponent'
 
 const DashboardLayout = () => {
   return (
 
-    <>
-      <NavbarDashboardComponent />
+    <main className='flex'>
+      {/* <NavbarDashboardComponent /> */}
+      <SidebarDashboardComponent />
       <Outlet />
-    </>
+    </main>
 
   )
 }

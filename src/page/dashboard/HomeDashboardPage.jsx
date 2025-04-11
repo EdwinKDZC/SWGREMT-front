@@ -1,102 +1,101 @@
-import React, { useState, useEffect } from 'react';
+import { BadgeEuro, ShoppingCart, TrendingUp, Wallet } from "lucide-react";
 
-const HomeDashboardPage = () => {
-  const [productType, setProductType] = useState('');
-  const [searchModel, setSearchModel] = useState('');
-  const [products, setProducts] = useState([]);
+const Dashboard = () => {
+    return (
+        <div className="w-full flex">
+            <main className="p-6 bg-gray-100 min-h-screen w-full">
+                <h1 className="text-2xl font-bold mb-4">
+                    Dashboard Importadora Móvil
+                </h1>
 
-  // Cargar productos desde localStorage al montar el componente
-  useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
-    setProducts(storedProducts);
-  }, []);
+                {/* Estadísticas principales */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Ingresos</p>
+                            <p className="text-xl font-semibold text-green-600">
+                                € 32,450.00
+                            </p>
+                        </div>
+                        <Wallet className="w-6 h-6 text-green-600" />
+                    </div>
 
-  // Filtrar productos según el tipo y el modelo
-  const filteredProducts = products.filter((product) => {
-    const matchesType = productType ? product.type === productType : true;
-    const matchesModel = product.model.toLowerCase().includes(searchModel.toLowerCase());
-    return matchesType && matchesModel;
-  });
+                    <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Gastos</p>
+                            <p className="text-xl font-semibold text-purple-600">
+                                € 18,930.00
+                            </p>
+                        </div>
+                        <ShoppingCart className="w-6 h-6 text-purple-600" />
+                    </div>
 
-  return (
-    <div className="min-h-screen p-6 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-6 text-blue-800">Inicio - Gestión de Productos</h1>
+                    <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Beneficios</p>
+                            <p className="text-xl font-semibold text-emerald-600">
+                                € 13,520.00
+                            </p>
+                        </div>
+                        <TrendingUp className="w-6 h-6 text-emerald-600" />
+                    </div>
 
-      {/* Filtros */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {/* Selector de tipo de producto */}
-        <div>
-          <label className="block text-lg font-medium mb-2" htmlFor="productType">
-            Filtrar por tipo de producto:
-          </label>
-          <select
-            id="productType"
-            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={productType}
-            onChange={(e) => setProductType(e.target.value)}
-          >
-            <option value="">Todos</option>
-            <option value="Batería">Batería</option>
-            <option value="Zócalo">Zócalo</option>
-            <option value="Pantalla">Pantalla</option>
-          </select>
+                    <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">Balance</p>
+                            <p className="text-xl font-semibold text-red-600">
+                                -€ 1,230.00
+                            </p>
+                        </div>
+                        <BadgeEuro className="w-6 h-6 text-red-600" />
+                    </div>
+                </div>
+
+                {/* Facturas recientes */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white p-4 rounded-2xl shadow-sm">
+                        <h2 className="text-lg font-bold mb-2">
+                            Productos más vendidos
+                        </h2>
+                        <ul className="space-y-2">
+                            <li className="flex justify-between text-sm">
+                                <span>Pantalla Samsung A10</span>
+                                <span className="font-medium">120 und</span>
+                            </li>
+                            <li className="flex justify-between text-sm">
+                                <span>Batería iPhone 7</span>
+                                <span className="font-medium">98 und</span>
+                            </li>
+                            <li className="flex justify-between text-sm">
+                                <span>Cable tipo C</span>
+                                <span className="font-medium">75 und</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-white p-4 rounded-2xl shadow-sm">
+                        <h2 className="text-lg font-bold mb-2">
+                            Últimas compras
+                        </h2>
+                        <ul className="space-y-2">
+                            <li className="flex justify-between text-sm">
+                                <span>Proveedor: MoviParts</span>
+                                <span className="font-medium">€ 2,100.00</span>
+                            </li>
+                            <li className="flex justify-between text-sm">
+                                <span>Proveedor: RepuStore</span>
+                                <span className="font-medium">€ 1,780.00</span>
+                            </li>
+                            <li className="flex justify-between text-sm">
+                                <span>Proveedor: ElectroCell</span>
+                                <span className="font-medium">€ 3,250.00</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </main>
         </div>
-
-        {/* Campo de búsqueda por modelo */}
-        <div>
-          <label className="block text-lg font-medium mb-2" htmlFor="searchModel">
-            Buscar por modelo:
-          </label>
-          <input
-            id="searchModel"
-            type="text"
-            placeholder="Ej: Galaxy S21"
-            className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchModel}
-            onChange={(e) => setSearchModel(e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* Tabla de productos */}
-      <div className="mt-6">
-        <h3 className="text-lg font-bold mb-4">Productos Registrados</h3>
-        <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-blue-800 text-white">
-            <tr>
-              <th className="p-2">Marca</th>
-              <th className="p-2">Modelo</th>
-              <th className="p-2">Calidad</th>
-              <th className="p-2">Precio Compra</th>
-              <th className="p-2">Precio Venta</th>
-              <th className="p-2">Tipo</th>
-              <th className="p-2">Cantidad Actual</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProducts.map((product) => (
-              <tr key={product.id} className="border-t">
-                <td className="p-2">{product.brand}</td>
-                <td className="p-2">{product.model}</td>
-                <td className="p-2">{product.quality}</td>
-                <td className="p-2">${product.purchasePrice}</td>
-                <td className="p-2">${product.salePrice}</td>
-                <td className="p-2">{product.type}</td>
-                <td className="p-2">{product.cantidadactual}</td>
-              </tr>
-            ))}
-            {filteredProducts.length === 0 && (
-              <tr>
-                <td colSpan="6" className="p-4 text-center text-gray-500">
-                  No se encontraron productos.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    );
 };
 
-export default HomeDashboardPage;
+export default Dashboard;

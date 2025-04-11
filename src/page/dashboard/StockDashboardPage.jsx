@@ -99,7 +99,7 @@ const StockDashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100">
+    <div className="w-full min-h-screen p-6 bg-gray-100">
       <h1 className="text-2xl font-bold mb-6 text-blue-800">Gestión de Stock</h1>
 
       {/* Formulario de transacciones */}
