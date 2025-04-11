@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 const StockDashboardPage = () => {
+
+  //Hola pruebas
   const [products, setProducts] = useState([]);
   const [stockTransactions, setStockTransactions] = useState([]);
   const [selectedType, setSelectedType] = useState("");
