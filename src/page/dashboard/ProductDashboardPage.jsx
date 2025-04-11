@@ -102,22 +102,22 @@ const ProductDashboardPage = () => {
                             <th className="p-2">Marca</th>
                             <th className="p-2">Modelo</th>
                             <th className="p-2">Calidad</th>
-                            <th className="p-2">Precio Compra</th>
+                            {/* <th className="p-2">Precio Compra</th> */}
                             <th className="p-2">Precio Venta</th>
                             <th className="p-2">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filteredProducts.map((product) => (
-                            <tr key={product._id} className="border-t">
-                                <td className="p-2">{product.type}</td>
+                            <tr key={product._id} className="border-t text-center">
+                                <td className="p-2">{product.category}</td>
                                 <td className="p-2">{product.brand}</td>
                                 <td className="p-2">{product.model}</td>
                                 <td className="p-2">{product.quality}</td>
-                                <td className="p-2">
-                                    ${product.purchasePrice}
-                                </td>
-                                <td className="p-2">${product.salePrice}</td>
+                                {/* <td className="p-2">
+                                    S/ {product.purchasePrice}
+                                </td> */}
+                                <td className="p-2">S/ {product.price}</td>
                                 <td className="p-2">
                                     <button
                                         className="text-blue-600 hover:underline mr-2"
