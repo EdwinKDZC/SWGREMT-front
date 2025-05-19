@@ -11,6 +11,7 @@ import ProductDashboardPage from "./page/dashboard/ProductDashboardPage";
 import { CartProvider } from "./context/CartContext";
 import CartPage from "./page/landing/CartPage";
 import StockDashboardPage from "./page/dashboard/StockDashboardPage";
+import SupplierDashboardPage from "./page/dashboard/SupplierDashboardPage";
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
                     <Route index element={<HomeDashboardPage />} />
                     <Route path="products" element={<ProductDashboardPage />} />
                     <Route path="stock" element={<StockDashboardPage />} />
+                    <Route path="supplier" element={<SupplierDashboardPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

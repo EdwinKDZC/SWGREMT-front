@@ -1,261 +1,172 @@
-import React, { useState, useEffect } from "react";
+// StockDashboardPage.jsx
+import { useEffect, useState } from "react";
+import { getProducts } from "../../service/productService";
+import { updateStock } from "../../service/stockService";
+import { ShoppingCart } from "lucide-react";
 
 const StockDashboardPage = () => {
-
-  //Hola pruebas
   const [products, setProducts] = useState([]);
-  const [stockTransactions, setStockTransactions] = useState([]);
-  const [selectedType, setSelectedType] = useState("");
-  const [selectedModel, setSelectedModel] = useState("");
-  const [selectedQuality, setSelectedQuality] = useState("");
-  const [quantity, setQuantity] = useState(0);
-  const [transactionType, setTransactionType] = useState(""); // "Ingreso" o "Salida"
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchBrand, setSearchBrand] = useState("");
+  const [searchModel, setSearchModel] = useState("");
+  const [cart, setCart] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [showCart, setShowCart] = useState(false);
 
-  // Cargar productos y transacciones desde localStorage
   useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem("products")) || [];
-    const storedTransactions = JSON.parse(localStorage.getItem("stockTransactions")) || [];
-    setProducts(storedProducts);
-    setStockTransactions(storedTransactions);
+    const fetchData = async () => {
+      const response = await getProducts();
+      setProducts(response);
+    };
+    fetchData();
   }, []);
 
-  // Guardar productos actualizados en localStorage
   useEffect(() => {
-    if (products.length > 0) {
-      localStorage.setItem("products", JSON.stringify(products));
+    const filtered = products.filter(
+      (p) =>
+        p.brand.toLowerCase().includes(searchBrand.toLowerCase()) &&
+        p.model.toLowerCase().includes(searchModel.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [searchBrand, searchModel, products]);
+
+  const handleAddToCart = (product, quantity) => {
+    const existing = cart.find((item) => item._id === product._id);
+    if (existing) {
+      const updatedCart = cart.map((item) =>
+        item._id === product._id
+          ? { ...item, quantity: item.quantity + quantity }
+          : item
+      );
+      setCart(updatedCart);
+    } else {
+      setCart([...cart, { ...product, quantity }]);
     }
-  }, [products]);
-
-  // Guardar transacciones en localStorage
-  useEffect(() => {
-    if (stockTransactions.length > 0) {
-      localStorage.setItem("stockTransactions", JSON.stringify(stockTransactions));
-    }
-  }, [stockTransactions]);
-
-  // Manejar la transacción (Ingreso o Salida)
-  const handleTransaction = () => {
-    if (!selectedModel || !transactionType || quantity <= 0) {
-      alert("Por favor, completa todos los campos correctamente.");
-      return;
-    }
-
-    // Buscar el producto seleccionado
-    const product = products.find((p) => p.model === selectedModel && p.type === selectedType && p.quality === selectedQuality);
-    if (!product) {
-      alert("Producto no encontrado.");
-      return;
-    }
-
-    // Calcular el nuevo stock
-    const newStock =
-      transactionType === "Ingreso" ? product.cantidadActual + quantity : product.cantidadActual - quantity;
-
-    if (newStock < 0) {
-      alert("No puedes realizar una salida mayor al stock disponible.");
-      return;
-    }
-
-    // Actualizar el stock del producto
-    const updatedProduct = { ...product, cantidadActual: newStock };
-    const updatedProducts = products.map((p) => (p.id === product.id ? updatedProduct : p));
-
-    setProducts(updatedProducts);
-
-    // Registrar la transacción
-    const transaction = {
-      id: Date.now(),
-      productId: product.id,
-      type: transactionType,
-      quantity,
-      date: new Date().toLocaleString(),
-    };
-
-    setStockTransactions([...stockTransactions, transaction]);
-
-    // Resetear campos
-    setQuantity(0);
-    setTransactionType("");
-    setSelectedType("");
-    setSelectedModel("");
-    setSelectedQuality("");
   };
 
-  // Calcular el stock actual con las transacciones
-  const getStockActual = (productId) => {
-    const product = products.find((prod) => prod.id === productId);
-
-    if (!product) return 0;
-
-    const totalIn = stockTransactions
-      .filter((transaction) => transaction.productId === productId && transaction.type === "Ingreso")
-      .reduce((acc, transaction) => acc + transaction.quantity, 0);
-
-    const totalOut = stockTransactions
-      .filter((transaction) => transaction.productId === productId && transaction.type === "Salida")
-      .reduce((acc, transaction) => acc + transaction.quantity, 0);
-
-    return product.cantidadActual + totalIn - totalOut;  // Calculamos el stock actual
+  const handleConfirmSale = async () => {
+    for (const item of cart) {
+      await updateStock(item._id, item.stock - item.quantity);
+    }
+    setCart([]);
+    setPaymentMethod("");
+    const updated = await getProducts();
+    setProducts(updated);
+    setShowCart(false);
   };
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-6 text-blue-800">Gestión de Stock</h1>
-
-      {/* Formulario de transacciones */}
-      <div className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Tipo de Producto */}
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Tipo de Producto</label>
-            <select
-              className="w-full p-2 border rounded-md"
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-            >
-              <option value="">Seleccione el tipo</option>
-              {[...new Set(products.map((product) => product.type))].map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Modelo */}
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Modelo</label>
-            <select
-              className="w-full p-2 border rounded-md"
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              disabled={!selectedType}
-            >
-              <option value="">Seleccione el modelo</option>
-              {products
-                .filter((product) => product.type === selectedType)
-                .map((product) => (
-                  <option key={product.model} value={product.model}>
-                    {product.model}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          {/* Calidad */}
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Calidad</label>
-            <select
-              className="w-full p-2 border rounded-md"
-              value={selectedQuality}
-              onChange={(e) => setSelectedQuality(e.target.value)}
-              disabled={!selectedModel}
-            >
-              <option value="">Seleccione la calidad</option>
-              {products
-                .filter(
-                  (product) =>
-                    product.type === selectedType && product.model === selectedModel
-                )
-                .map((product) => (
-                  <option key={product.quality} value={product.quality}>
-                    {product.quality}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          {/* Tipo de Transacción */}
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Tipo de Transacción</label>
-            <select
-              className="w-full p-2 border rounded-md"
-              value={transactionType}
-              onChange={(e) => setTransactionType(e.target.value)}
-            >
-              <option value="">Seleccione</option>
-              <option value="Ingreso">Ingreso</option>
-              <option value="Salida">Salida</option>
-            </select>
-          </div>
-
-          {/* Cantidad */}
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">Cantidad</label>
-            <input
-              type="number"
-              className="w-full p-2 border rounded-md"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              min="1"
-            />
-          </div>
-        </div>
-
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-blue-800">
+          Gestión de Stock
+        </h1>
         <button
-          className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-          onClick={handleTransaction}
+          className="relative"
+          onClick={() => setShowCart(!showCart)}
         >
-          Registrar Transacción
+          <ShoppingCart className="text-blue-800 w-8 h-8" />
+          {cart.length > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+              {cart.length}
+            </span>
+          )}
         </button>
       </div>
 
-      {/* Reporte de transacciones */}
-      <div className="mt-8">
-        <h3 className="text-lg font-bold mb-4">Reporte de Transacciones</h3>
-        <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-blue-800 text-white">
-            <tr>
-              <th className="p-2">Tipo</th>
-              <th className="p-2">Modelo</th>
-              <th className="p-2">Calidad</th>
-              <th className="p-2">Tipo de Transacción</th>
-              <th className="p-2">Cantidad</th>
-              <th className="p-2">Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            {stockTransactions.map((transaction) => {
-              const product = products.find((p) => p.id === transaction.productId);
-              return (
-                <tr key={transaction.id} className="border-t">
-                  <td className="p-2">{product?.type}</td>
-                  <td className="p-2">{product?.model}</td>
-                  <td className="p-2">{product?.quality}</td>
-                  <td className="p-2">{transaction.type}</td>
-                  <td className="p-2">{transaction.quantity}</td>
-                  <td className="p-2">{transaction.date}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      {/* Filtros */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por marca"
+          className="p-2 border rounded"
+          value={searchBrand}
+          onChange={(e) => setSearchBrand(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Buscar por modelo"
+          className="p-2 border rounded"
+          value={searchModel}
+          onChange={(e) => setSearchModel(e.target.value)}
+        />
       </div>
 
-      {/* Tabla de stock actual */}
-      <div className="mt-8">
-        <h3 className="text-lg font-bold mb-4">Stock Actual de Productos</h3>
-        <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-blue-800 text-white">
-            <tr>
-              <th className="p-2">Tipo</th>
-              <th className="p-2">Modelo</th>
-              <th className="p-2">Calidad</th>
-              <th className="p-2">Stock Actual</th>
+      {/* Tabla productos */}
+      <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
+        <thead className="bg-blue-800 text-white">
+          <tr>
+            <th className="p-2">Marca</th>
+            <th className="p-2">Modelo</th>
+            <th className="p-2">Categoría</th>
+            <th className="p-2">Calidad</th>
+            <th className="p-2">Precio</th>
+            <th className="p-2">Stock</th>
+            <th className="p-2">Vender</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredProducts.map((product) => (
+            <tr key={product._id} className="border-t text-center">
+              <td className="p-2">{product.brand}</td>
+              <td className="p-2">{product.model}</td>
+              <td className="p-2">{product.category}</td>
+              <td className="p-2">{product.quality}</td>
+              <td className="p-2">S/ {product.price}</td>
+              <td className="p-2">{product.stock}</td>
+              <td className="p-2">
+                <button
+                  className="text-blue-600 hover:underline"
+                  onClick={() => {
+                    const quantity = parseInt(
+                      prompt("¿Cuántas unidades desea vender?"),
+                      10
+                    );
+                    if (quantity > 0 && quantity <= product.stock) {
+                      handleAddToCart(product, quantity);
+                    } else {
+                      alert("Cantidad no válida o supera el stock disponible");
+                    }
+                  }}
+                >
+                  Vender
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id} className="border-t">
-                <td className="p-2">{product.type}</td>
-                <td className="p-2">{product.model}</td>
-                <td className="p-2">{product.quality}</td>
-                <td className="p-2">{getStockActual(product.id)}</td>
-              </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Carrito */}
+      {showCart && (
+        <div className="fixed top-20 right-10 bg-white shadow-lg border rounded-xl p-4 w-80 z-50">
+          <h2 className="text-lg font-bold mb-2">Carrito de Venta</h2>
+          <ul>
+            {cart.map((item) => (
+              <li key={item._id} className="mb-1">
+                {item.brand} {item.model} x{item.quantity} = S/ {item.price * item.quantity}
+              </li>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </ul>
+          <p className="mt-2 font-semibold">
+            Total: S/ {cart.reduce((acc, p) => acc + p.quantity * p.price, 0)}
+          </p>
+          <input
+            type="text"
+            placeholder="Método de pago"
+            className="mt-2 p-1 border rounded w-full"
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          />
+          <button
+            className="mt-2 w-full bg-green-600 text-white p-2 rounded hover:bg-green-500"
+            onClick={handleConfirmSale}
+            disabled={cart.length === 0 || !paymentMethod}
+          >
+            Confirmar Venta
+          </button>
+        </div>
+      )}
     </div>
   );
 };

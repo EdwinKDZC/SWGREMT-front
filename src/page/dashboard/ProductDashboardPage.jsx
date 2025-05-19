@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductModalDashboardComponent from "../../components/dashboard/ProductModalDashboardComponent";
-import { getProducts } from "../../service/productService";
+import { deleteProduct, getProducts } from "../../service/productService";
 
 const ProductDashboardPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,8 +46,18 @@ const ProductDashboardPage = () => {
         setIsModalOpen(true);
     };
 
-    const handleDeleteProduct = (id) => {
-        setProducts(products.filter((product) => product._id !== id));
+    const handleDeleteProduct = async (id) => {
+        // setProducts(products.filter((product) => product._id !== id));
+        try {
+            const response = await deleteProduct(id);
+            console.log("Product deleted:", response);
+            // Actualiza la lista de productos después de eliminar
+            setProducts(products.filter((product) => product._id !== id)
+            );
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            
+        }
     };
 
     return (
