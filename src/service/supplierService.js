@@ -85,4 +85,14 @@ const importSuppliers = async (supplierId, file) => {
     }
 }
 
-export { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier, uploadSupplierFile, importSuppliers };
+const getCatalogSuppliers = async (supplierId) => {
+    try {
+        const response = await ClientAxios.get(`/suppliers/getCatalogSuppliers/${supplierId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching catalog suppliers:", error);
+        throw error;
+    }
+}
+
+export { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier, uploadSupplierFile, importSuppliers, getCatalogSuppliers };

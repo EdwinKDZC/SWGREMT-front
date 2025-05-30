@@ -16,7 +16,7 @@ const SidebarDashboardComponent = () => {
         { to: "/dashboard/products", icon: <Package className="w-5 h-5" />, label: "Productos" },
         { to: "/dashboard/stock", icon: <Truck className="w-5 h-5" />, label: "Inventario" },
         { to: "/dashboard/supplier", icon: <Truck className="w-5 h-5" />, label: "Proveedor" },
-        { to: "/dashboard/stock", icon: <Truck className="w-5 h-5" />, label: "Cotizacion" },
+        { to: "/dashboard/cotizacion", icon: <Truck className="w-5 h-5" />, label: "Cotizacion" },
         { to: "/dashboard/stock", icon: <Truck className="w-5 h-5" />, label: "Orden de Compra" },
     ];
 
