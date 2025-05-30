@@ -50,4 +50,39 @@ const deleteSupplier = async (id) => {
     }
 };
 
-export { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier };
+const uploadSupplierFile = async (file) => {
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await ClientAxios.post("/suppliers/uploadSupplierFile", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error uploading supplier file:", error);
+        throw error;
+    }
+}
+
+const importSuppliers = async (supplierId, file) => {
+    try {
+        const formData = new FormData();
+        formData.append("supplierId", supplierId);
+        formData.append("file", file);
+
+        const response = await ClientAxios.post("/suppliers/importSuppliers", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error importing suppliers:", error);
+        throw error;
+    }
+}
+
+export { getSuppliers, getSupplierById, createSupplier, updateSupplier, deleteSupplier, uploadSupplierFile, importSuppliers };
