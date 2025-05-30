@@ -14,6 +14,7 @@ import StockDashboardPage from "./page/dashboard/StockDashboardPage";
 import SupplierDashboardPage from "./page/dashboard/SupplierDashboardPage";
 import CotizacionDashboardPage from "./page/dashboard/CotizacionDashboardPage";
 import CarritoCotizacionPage from "./page/dashboard/CarritoCotizacionPage";
+import MisCotizacionesPage from "./page/dashboard/MisCotizacionesPage";
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
                     <Route path="supplier" element={<SupplierDashboardPage />} />
                     <Route path="cotizacion" element={<CotizacionDashboardPage />} />
                     <Route path="cotizacion/carrito" element={<CarritoCotizacionPage />} />
+                    <Route path="mis-cotizaciones" element={<MisCotizacionesPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

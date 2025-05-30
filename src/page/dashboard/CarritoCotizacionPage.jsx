@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createCotizarProducto } from "../../service/cotizarProductoService";
 
 export default function CarritoCotizacionPage() {
   const [cart, setCart] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cotizacion_cart")) || [];
+    const storedCart =
+      JSON.parse(localStorage.getItem("cotizacion_cart")) || [];
     setCart(storedCart);
   }, []);
 
@@ -17,6 +19,46 @@ export default function CarritoCotizacionPage() {
   };
 
   const total = cart.reduce((sum, item) => sum + parseFloat(item.precio), 0);
+
+const handleGuardarCotizacion = async () => {
+  if (cart.length === 0) {
+    alert("El carrito está vacío. No se puede generar una cotización.");
+    return;
+  }
+
+  // Asumimos que todos los productos del carrito pertenecen al mismo proveedor
+  const supplier = cart[0]?.supplierId;
+
+  if (!supplier || !supplier.companyName) {
+    alert("No se pudo identificar el proveedor para la cotización.");
+    return;
+  }
+
+  const cotizacionPayload = {
+    companyName: supplier.companyName,
+    productos: cart.map((item) => ({
+      marca: item.marca,
+      modelo: item.modelo,
+      tipo: item.tipo,
+      calidad: item.calidad,
+      precio: item.precio,
+      fechaGarantia: item.fechaGarantia
+    }))
+  };
+
+  try {
+    const response = await createCotizarProducto(cotizacionPayload);
+    console.log("Cotización guardada:", response);
+    alert("Cotización generada exitosamente.");
+    localStorage.removeItem("cotizacion_cart");
+    setCart([]);
+    navigate("/dashboard/cotizacion");
+  } catch (error) {
+    console.error("Error al guardar la cotización:", error);
+    alert("Ocurrió un error al generar la cotización. Por favor, inténtelo de nuevo.");
+  }
+};
+
 
   return (
     <div className="p-4">
@@ -55,7 +97,10 @@ export default function CarritoCotizacionPage() {
 
           <div className="mt-4 text-right">
             <p className="font-bold text-xl">Total: S/ {total.toFixed(2)}</p>
-            <button className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            <button
+              className="mt-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+              onClick={handleGuardarCotizacion}
+            >
               Generar Cotización
             </button>
             <button
