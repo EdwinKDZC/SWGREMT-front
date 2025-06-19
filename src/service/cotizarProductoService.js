@@ -20,4 +20,17 @@ const getCotizarProductos = async () => {
     }
 }
 
-export { createCotizarProducto, getCotizarProductos };
+const updateCotizarProducto = async (idCotizarProducto, cotizacion) => {
+    try {
+        const response = await ClientAxios.put(
+            `/cotizarProductos/updateCotizarProducto/${idCotizarProducto}`,
+            cotizacion
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error updating cotizar producto:", error);
+        throw error;
+    }
+}
+
+export { createCotizarProducto, getCotizarProductos, updateCotizarProducto };
