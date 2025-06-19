@@ -38,7 +38,7 @@ const ProductDashboardPage = () => {
                 quality: "",
                 purchasePrice: "",
                 salePrice: "",
-                image: null,
+                image: "",
                 // type: productType, // Asigna el tipo seleccionado al producto
                 category: productType, // Asigna el tipo seleccionado al producto
             }

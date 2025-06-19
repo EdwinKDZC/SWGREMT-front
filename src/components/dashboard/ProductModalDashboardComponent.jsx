@@ -37,7 +37,7 @@ const ProductModalDashboardComponent = ({
                 <h2 className="text-xl font-bold mb-4">
                     {productData._id ? "Editar Producto" : "Registrar Producto"}
                 </h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
                     <div className="mb-4">
                         <label
                             className="block text-sm font-medium"

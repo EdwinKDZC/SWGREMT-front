@@ -2,9 +2,16 @@ import clientAxios from "../config/ClientAxios";
 
 const createProduct = async (product) => {
     try {
+        const config = {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        };
+
         const response = await clientAxios.post(
             "/products/createProduct",
-            product
+            product,
+            config
         );
         return response.data;
     } catch (error) {
