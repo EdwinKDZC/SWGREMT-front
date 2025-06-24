@@ -112,7 +112,7 @@ const StockDashboardPage = () => {
               <td className="p-2">{product.model}</td>
               <td className="p-2">{product.category}</td>
               <td className="p-2">{product.quality}</td>
-              <td className="p-2">S/ {product.price}</td>
+              <td className="p-2">S/ {product.priceSold}</td>
               <td className="p-2">{product.stock}</td>
               <td className="p-2">
                 <button

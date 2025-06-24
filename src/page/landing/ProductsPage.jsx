@@ -30,8 +30,8 @@ const ProductsPage = () => {
         const filtered = products.filter((product) => {
             const matchesType = filterType ? product.category === filterType : true;
             const matchesPrice =
-                parseFloat(product.salePrice) >= priceRange.min &&
-                parseFloat(product.salePrice) <= priceRange.max;
+                parseFloat(product.priceSold) >= priceRange.min &&
+                parseFloat(product.priceSold) <= priceRange.max;
             return matchesType || matchesPrice;
         });
         setFilteredProducts(filtered);
@@ -117,7 +117,7 @@ const ProductsPage = () => {
                                 {product.brand} - {product.model}
                             </h2>
                             <p className="text-gray-700">
-                                ${parseFloat(product.salePrice).toFixed(2)}
+                                ${parseFloat(product.priceSold).toFixed(2)}
                             </p>
                             <button
                                 className="mt-4 bg-blue-500 text-white p-2 rounded hover:bg-blue-700"

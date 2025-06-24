@@ -36,8 +36,8 @@ const ProductDashboardPage = () => {
                 model: "",
                 description: "",
                 quality: "",
-                purchasePrice: "",
-                salePrice: "",
+                pricePurchase: "",
+                priceSold: "",
                 image: "",
                 // type: productType, // Asigna el tipo seleccionado al producto
                 category: productType, // Asigna el tipo seleccionado al producto
@@ -124,10 +124,7 @@ const ProductDashboardPage = () => {
                                 <td className="p-2">{product.brand}</td>
                                 <td className="p-2">{product.model}</td>
                                 <td className="p-2">{product.quality}</td>
-                                {/* <td className="p-2">
-                                    S/ {product.purchasePrice}
-                                </td> */}
-                                <td className="p-2">S/ {product.price}</td>
+                                <td className="p-2">S/ {product.priceSold}</td>
                                 <td className="p-2">
                                     <button
                                         className="text-blue-600 hover:underline mr-2"

@@ -44,9 +44,15 @@ const getProductById = async (idProduct) => {
 
 const updateProduct = async (idProduct, product) => {
     try {
+        const config = {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        };
         const response = await clientAxios.put(
             `/products/updateProduct/${idProduct}`,
-            product
+            product,
+            config
         );
         return response.data;
     } catch (error) {
