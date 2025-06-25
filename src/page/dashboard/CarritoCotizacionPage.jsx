@@ -7,8 +7,7 @@ export default function CarritoCotizacionPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedCart =
-      JSON.parse(localStorage.getItem("cotizacion_cart")) || [];
+    const storedCart = JSON.parse(localStorage.getItem("cotizacion_cart")) || [];
     setCart(storedCart);
   }, []);
 
@@ -18,47 +17,59 @@ export default function CarritoCotizacionPage() {
     localStorage.setItem("cotizacion_cart", JSON.stringify(updatedCart));
   };
 
-  const total = cart.reduce((sum, item) => sum + parseFloat(item.precio), 0);
-
-const handleGuardarCotizacion = async () => {
-  if (cart.length === 0) {
-    alert("El carrito está vacío. No se puede generar una cotización.");
-    return;
-  }
-
-  // Asumimos que todos los productos del carrito pertenecen al mismo proveedor
-  const supplier = cart[0]?.supplierId;
-
-  if (!supplier || !supplier.companyName) {
-    alert("No se pudo identificar el proveedor para la cotización.");
-    return;
-  }
-
-  const cotizacionPayload = {
-    companyName: supplier.companyName,
-    productos: cart.map((item) => ({
-      marca: item.marca,
-      modelo: item.modelo,
-      tipo: item.tipo,
-      calidad: item.calidad,
-      precio: item.precio,
-      fechaGarantia: item.fechaGarantia
-    }))
+  const handleQuantityChange = (id, newQuantity) => {
+    const updatedCart = cart.map((item) =>
+      item._id === id
+        ? { ...item, quantity: Math.max(1, parseInt(newQuantity) || 1) }
+        : item
+    );
+    setCart(updatedCart);
+    localStorage.setItem("cotizacion_cart", JSON.stringify(updatedCart));
   };
 
-  try {
-    const response = await createCotizarProducto(cotizacionPayload);
-    console.log("Cotización guardada:", response);
-    alert("Cotización generada exitosamente.");
-    localStorage.removeItem("cotizacion_cart");
-    setCart([]);
-    navigate("/dashboard/cotizacion");
-  } catch (error) {
-    console.error("Error al guardar la cotización:", error);
-    alert("Ocurrió un error al generar la cotización. Por favor, inténtelo de nuevo.");
-  }
-};
+  const total = cart.reduce(
+    (sum, item) => sum + parseFloat(item.precio) * (item.quantity || 1),
+    0
+  );
 
+  const handleGuardarCotizacion = async () => {
+    if (cart.length === 0) {
+      alert("El carrito está vacío. No se puede generar una cotización.");
+      return;
+    }
+
+    const supplier = cart[0]?.supplierId;
+
+    if (!supplier || !supplier.companyName) {
+      alert("No se pudo identificar el proveedor para la cotización.");
+      return;
+    }
+
+    const cotizacionPayload = {
+      companyName: supplier.companyName,
+      productos: cart.map((item) => ({
+        marca: item.marca,
+        modelo: item.modelo,
+        tipo: item.tipo,
+        calidad: item.calidad,
+        precio: item.precio,
+        cantidad: item.quantity || 1,
+        fechaGarantia: item.fechaGarantia,
+      })),
+    };
+
+    try {
+      const response = await createCotizarProducto(cotizacionPayload);
+      console.log("Cotización guardada:", response);
+      alert("Cotización generada exitosamente.");
+      localStorage.removeItem("cotizacion_cart");
+      setCart([]);
+      navigate("/dashboard/cotizacion");
+    } catch (error) {
+      console.error("Error al guardar la cotización:", error);
+      alert("Ocurrió un error al generar la cotización. Por favor, inténtelo de nuevo.");
+    }
+  };
 
   return (
     <div className="p-4">
@@ -72,7 +83,9 @@ const handleGuardarCotizacion = async () => {
               <tr>
                 <th className="p-2">Marca</th>
                 <th className="p-2">Modelo</th>
-                <th className="p-2">Precio</th>
+                <th className="p-2">Cantidad</th>
+                <th className="p-2">Precio Unitario</th>
+                <th className="p-2">Subtotal</th>
                 <th className="p-2">Acción</th>
               </tr>
             </thead>
@@ -81,7 +94,19 @@ const handleGuardarCotizacion = async () => {
                 <tr key={item._id} className="text-center border-t">
                   <td className="p-2">{item.marca}</td>
                   <td className="p-2">{item.modelo}</td>
+                  <td className="p-2">
+                    <input
+                      type="number"
+                      min="1"
+                      className="w-16 text-center border rounded"
+                      value={item.quantity || 1}
+                      onChange={(e) => handleQuantityChange(item._id, e.target.value)}
+                    />
+                  </td>
                   <td className="p-2">S/ {item.precio}</td>
+                  <td className="p-2">
+                    S/ {(item.precio * (item.quantity || 1)).toFixed(2)}
+                  </td>
                   <td className="p-2">
                     <button
                       className="text-red-500 hover:text-red-700"

@@ -7,6 +7,7 @@ export default function CotizacionDashboardPage() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [cart, setCart] = useState([]);
+  const [quantities, setQuantities] = useState({}); // Estado para cantidades
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -32,15 +33,30 @@ export default function CotizacionDashboardPage() {
     try {
       const response = await getCatalogSuppliers(supplierId);
       setFilteredProducts(response);
+
+      // Inicializa las cantidades en 1 por defecto
+      const initialQuantities = {};
+      response.forEach((product) => {
+        initialQuantities[product._id] = 1;
+      });
+      setQuantities(initialQuantities);
     } catch (error) {
       console.error("Error fetching catalog suppliers:", error);
     }
   };
 
+  const handleQuantityChange = (productId, value) => {
+    const newQuantities = { ...quantities, [productId]: Number(value) };
+    setQuantities(newQuantities);
+  };
+
   const handleAddToCart = (product) => {
+    const quantity = quantities[product._id] || 1;
+    const productWithQuantity = { ...product, quantity };
+
     const existing = cart.find((p) => p._id === product._id);
     if (!existing) {
-      const updatedCart = [...cart, product];
+      const updatedCart = [...cart, productWithQuantity];
       setCart(updatedCart);
       localStorage.setItem("cotizacion_cart", JSON.stringify(updatedCart));
     }
@@ -91,6 +107,7 @@ export default function CotizacionDashboardPage() {
               <th className="p-2">Calidad</th>
               <th className="p-2">Precio</th>
               <th className="p-2">Garantía</th>
+              <th className="p-2">Cantidad</th>
               <th className="p-2">Acciones</th>
             </tr>
           </thead>
@@ -103,6 +120,17 @@ export default function CotizacionDashboardPage() {
                 <td className="p-2">{product.calidad}</td>
                 <td className="p-2">S/ {product.precio}</td>
                 <td className="p-2">{product.fechaGarantia}</td>
+                <td className="p-2">
+                  <input
+                    type="number"
+                    min="1"
+                    className="w-16 p-1 border rounded"
+                    value={quantities[product._id] || 1}
+                    onChange={(e) =>
+                      handleQuantityChange(product._id, e.target.value)
+                    }
+                  />
+                </td>
                 <td className="p-2">
                   <button
                     className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"

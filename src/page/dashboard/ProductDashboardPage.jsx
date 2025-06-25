@@ -108,6 +108,7 @@ const ProductDashboardPage = () => {
                 <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
                     <thead className="bg-blue-800 text-white">
                         <tr>
+                            <th className="p-2">Código</th>
                             <th className="p-2">Tipo</th>
                             <th className="p-2">Marca</th>
                             <th className="p-2">Modelo</th>
@@ -120,6 +121,7 @@ const ProductDashboardPage = () => {
                     <tbody>
                         {filteredProducts.map((product) => (
                             <tr key={product._id} className="border-t text-center">
+                                <td className="p-2">{product.codigo}</td>
                                 <td className="p-2">{product.category}</td>
                                 <td className="p-2">{product.brand}</td>
                                 <td className="p-2">{product.model}</td>

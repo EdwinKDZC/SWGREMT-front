@@ -57,6 +57,21 @@ const ProductModalDashboardComponent = ({
           {productData._id ? "Editar Producto" : "Registrar Producto"}
         </h2>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+          {productData._id && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium" htmlFor="codigo">
+              Codigo
+            </label>
+            <input
+              type="text"
+              id="codigo"
+              name="codigo"
+              value={productData.codigo}
+              disabled={!!productData._id} // Deshabilita el campo si es edición
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+          )}
           <div className="mb-4">
             <label className="block text-sm font-medium" htmlFor="brand">
               Marca
