@@ -36,6 +36,7 @@ const ProductModalDashboardComponent = ({
         fetchProducts(); // Actualiza la lista de productos después de actualizar
         onClose(); // Cierra el modal después de actualizar
       } catch (error) {
+        alert("Error al actualizar el producto. Por favor, inténtelo de nuevo.");
         console.error("Error al actualizar el producto:", error);
       }
     }

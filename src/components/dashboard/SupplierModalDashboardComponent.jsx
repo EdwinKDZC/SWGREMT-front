@@ -23,13 +23,14 @@ const SupplierModalDashboardComponent = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+console.log("Datos del proveedor:", supplierData._id);
     try {
       let response;
       if (supplierData._id) {
         // Update existing supplier
         response = await updateSupplier(supplierData._id, supplierData);
         console.log("Proveedor actualizado:", response);
+        await importSuppliers(supplierData._id, supplierData.file); // Importa los datos del archivo
       } else {
         // Create new supplier
         response = await createSupplier(supplierData);
