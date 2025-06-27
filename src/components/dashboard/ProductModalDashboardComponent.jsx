@@ -16,7 +16,6 @@ const ProductModalDashboardComponent = ({
     setProductData({ ...productData, image: e.target.files[0] });
   };
 
-  console.log("Product Data:", productData);
   const handleAction = async (action) => {
     if (action === "create") {
       // Aquí podrías implementar la lógica para crear un producto
@@ -32,11 +31,11 @@ const ProductModalDashboardComponent = ({
       // Aquí podrías implementar la lógica para actualizar un producto
       try {
         const response = await updateProduct(productData._id, productData);
-        console.log("Producto actualizado:", response);
+
         fetchProducts(); // Actualiza la lista de productos después de actualizar
         onClose(); // Cierra el modal después de actualizar
       } catch (error) {
-        alert("Error al actualizar el producto. Por favor, inténtelo de nuevo.");
+        alert(error.response.data.message || "Error al actualizar el producto, ya existe");
         console.error("Error al actualizar el producto:", error);
       }
     }
@@ -59,19 +58,19 @@ const ProductModalDashboardComponent = ({
         </h2>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           {productData._id && (
-          <div className="mb-4">
-            <label className="block text-sm font-medium" htmlFor="codigo">
-              Codigo
-            </label>
-            <input
-              type="text"
-              id="codigo"
-              name="codigo"
-              value={productData.codigo}
-              disabled={!!productData._id} // Deshabilita el campo si es edición
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium" htmlFor="codigo">
+                Codigo
+              </label>
+              <input
+                type="text"
+                id="codigo"
+                name="codigo"
+                value={productData.codigo}
+                disabled={!!productData._id} // Deshabilita el campo si es edición
+                className="w-full p-2 border rounded-md"
+              />
+            </div>
           )}
           <div className="mb-4">
             <label className="block text-sm font-medium" htmlFor="brand">

@@ -13,8 +13,12 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
         try {
             const response = await getProducts();
-            setProducts(response);
-            setFilteredProducts(response);
+            const stockProducts = response.filter(
+                (product) => product.stock > 0  
+            );
+            console.log("Filtered products with stock:", stockProducts);
+            setProducts(stockProducts);
+            setFilteredProducts(stockProducts);
         } catch (error) {
             console.error("Error fetching products:", error);
         }
@@ -32,7 +36,7 @@ const ProductsPage = () => {
             const matchesPrice =
                 parseFloat(product.priceSold) >= priceRange.min &&
                 parseFloat(product.priceSold) <= priceRange.max;
-            return matchesType || matchesPrice;
+            return matchesType && matchesPrice;
         });
         setFilteredProducts(filtered);
     }, [filterType, priceRange, products]);

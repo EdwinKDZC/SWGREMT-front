@@ -7,32 +7,36 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     setCartItems((prevItems) => {
-      const existingProduct = prevItems.find((item) => item.id === product.id);
+      const existingProduct = prevItems.find((item) => item._id === product._id);
 
       if (existingProduct) {
-        // Si el producto ya está en el carrito, aumenta su cantidad
+        // Si ya existe, aumentar cantidad
         return prevItems.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item._id === product._id
+            ? { ...item, cantidad: item.cantidad + 1 }
+            : item
         );
       } else {
-        // Si el producto no está en el carrito, agrégalo con cantidad 1
-        return [...prevItems, { ...product, quantity: 1 }];
+        // Si no existe, agregar nuevo producto con cantidad inicial
+        return [...prevItems, { ...product, cantidad: 1 }];
       }
     });
   };
 
   const removeFromCart = (productId) => {
     setCartItems((prevItems) => {
-      const existingProduct = prevItems.find((item) => item.id === productId);
+      const existingProduct = prevItems.find((item) => item._id === productId);
 
-      if (existingProduct.quantity > 1) {
-        // Reduce la cantidad si es mayor a 1
+      if (existingProduct && existingProduct.cantidad > 1) {
+        // Si hay más de uno, reducir cantidad
         return prevItems.map((item) =>
-          item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
+          item._id === productId
+            ? { ...item, cantidad: item.cantidad - 1 }
+            : item
         );
       } else {
-        // Elimina el producto si su cantidad llega a 0
-        return prevItems.filter((item) => item.id !== productId);
+        // Si hay solo uno, eliminar
+        return prevItems.filter((item) => item._id !== productId);
       }
     });
   };
@@ -42,7 +46,9 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider
+      value={{ cartItems, addToCart, removeFromCart, clearCart }}
+    >
       {children}
     </CartContext.Provider>
   );
