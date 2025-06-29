@@ -144,12 +144,12 @@ const StockDashboardPage = () => {
           <ul>
             {cart.map((item) => (
               <li key={item._id} className="mb-1">
-                {item.brand} {item.model} x{item.quantity} = S/ {item.price * item.quantity}
+                {item.brand} {item.model} x{item.quantity} = S/ {item.priceSold * item.quantity}
               </li>
             ))}
           </ul>
           <p className="mt-2 font-semibold">
-            Total: S/ {cart.reduce((acc, p) => acc + p.quantity * p.price, 0)}
+            Total: S/ {cart.reduce((acc, p) => acc + p.quantity * p.priceSold, 0)}
           </p>
           <input
             type="text"

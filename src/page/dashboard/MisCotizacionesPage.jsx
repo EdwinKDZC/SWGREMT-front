@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   getCotizarProductosByPage,
   updateCotizarProducto,
-} from '../../service/cotizarProductoService';
-import CotizacionModal from '../../components/dashboard/CotizacionModal';
+} from "../../service/cotizarProductoService";
+import CotizacionModal from "../../components/dashboard/CotizacionModal";
 
-const dateFormatter = new Intl.DateTimeFormat('es-PE', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
+const dateFormatter = new Intl.DateTimeFormat("es-PE", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
 });
 
 export default function MisCotizacionesPage() {
@@ -18,22 +18,21 @@ export default function MisCotizacionesPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchPage = async (p = 1) => {
+  const fetchPage = async (newPage) => {
     try {
-      const data = await getCotizarProductosByPage(p);
+      const data = await getCotizarProductosByPage(newPage);
       setCotizaciones(data.cotizarProductos);
       setTotalPages(data.totalPages);
-      setPage(data.page);
+      setPage(parseInt(data.page));
     } catch (error) {
-      console.error('Error cargando cotizaciones:', error);
+      console.error("Error cargando cotizaciones:", error);
     }
   };
 
   useEffect(() => {
-    fetchPage(page);
-  }, [page]);
-
-  
+    fetchPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openModal = (cot) => {
     setSelectedCotizacion(cot);
@@ -58,7 +57,7 @@ export default function MisCotizacionesPage() {
         )
       );
     } catch (err) {
-      console.error('Error actualizando estado:', err);
+      console.error("Error actualizando estado:", err);
     }
     closeModal();
   };
@@ -77,13 +76,20 @@ export default function MisCotizacionesPage() {
           </tr>
         </thead>
         <tbody>
+          {cotizaciones.length === 0 && (
+            <tr>
+              <td colSpan="4" className="text-center p-4">
+                No hay cotizaciones disponibles.
+              </td>
+            </tr>
+          )}
           {cotizaciones.map((cot) => (
             <tr key={cot._id} className="text-center border-t">
               <td className="p-2">{cot.companyName}</td>
               <td className="p-2">
                 {cot.fechaCotizacion
                   ? dateFormatter.format(new Date(cot.fechaCotizacion))
-                  : 'Sin fecha'}
+                  : "Sin fecha"}
               </td>
               <td className="p-2">{cot.estado}</td>
               <td className="p-2">
@@ -98,23 +104,21 @@ export default function MisCotizacionesPage() {
           ))}
         </tbody>
       </table>
-
-      {/* Paginación */}
-      <div className="flex justify-center items-center gap-4">
+      <div className="flex justify-center items-center space-x-4 mt-4">
         <button
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          onClick={() => fetchPage(page - 1)}
+          disabled={page <= 1}
         >
           Anterior
         </button>
-        <span className="font-medium">
+        <span>
           Página {page} de {totalPages}
         </span>
         <button
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={page === totalPages}
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          onClick={() => fetchPage(page + 1)}
+          disabled={page >= totalPages}
         >
           Siguiente
         </button>

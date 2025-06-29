@@ -35,7 +35,7 @@ const updateCotizarProducto = async (idCotizarProducto, cotizacion) => {
 
 const getCotizarProductosByPage = async (page) => {
     try {
-        const response = await ClientAxios.get(`/cotizarProductos/getCotizarProductosByPage?${page}`);
+        const response = await ClientAxios.get(`/cotizarProductos/getCotizarProductosByPage?page=${page}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching cotizar producto by page:", error);
