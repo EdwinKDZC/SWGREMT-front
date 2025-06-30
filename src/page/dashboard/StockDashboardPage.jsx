@@ -1,8 +1,9 @@
-// StockDashboardPage.jsx
 import { useEffect, useState } from "react";
 import { getProducts } from "../../service/productService";
-import { updateStock } from "../../service/stockService";
+import { reducirStock } from "../../service/stockService";
 import { ShoppingCart } from "lucide-react";
+import BoletaModal from "../../components/dashboard/BoletaModal";
+import { registrarVenta } from "../../service/ventaService";
 
 const StockDashboardPage = () => {
   const [products, setProducts] = useState([]);
@@ -10,8 +11,9 @@ const StockDashboardPage = () => {
   const [searchBrand, setSearchBrand] = useState("");
   const [searchModel, setSearchModel] = useState("");
   const [cart, setCart] = useState([]);
-  const [paymentMethod, setPaymentMethod] = useState("");
   const [showCart, setShowCart] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [boletaNum, setBoletaNum] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,26 +47,63 @@ const StockDashboardPage = () => {
   };
 
   const handleConfirmSale = async () => {
-    for (const item of cart) {
-      await updateStock(item._id, item.stock - item.quantity);
+    try {
+      const total = cart.reduce(
+        (acc, item) => acc + item.quantity * item.priceSold,
+        0
+      );
+
+      const productosVendidos = cart.map(async (item) => {
+        console.log("productosvendidos", item);
+        console.log("item.codigo", item.codigo);
+        console.log("item.quantity", item.quantity);
+        await reducirStock(item.codigo, item.quantity);
+
+        return {
+          codigo: item.codigo,
+          brand: item.brand,
+          model: item.model,
+          category: item.category,
+          quality: item.quality,
+          cantidad: item.quantity,
+          precio: item.priceSold,
+        };
+      });
+      console.log("productosVendidos", productosVendidos);
+      const venta = {
+        tipo: "Boleta",
+        numero: `B-${String(boletaNum).padStart(4, "0")}`,
+        productos: productosVendidos,
+        total,
+      };
+
+      await registrarVenta(venta);
+
+      setCart([]);
+      setIsModalOpen(false);
+      setBoletaNum((prev) => prev + 1);
+      const updated = await getProducts();
+      setProducts(updated);
+    } catch (err) {
+      alert("Error al procesar venta: " + err.message);
     }
-    setCart([]);
-    setPaymentMethod("");
-    const updated = await getProducts();
-    setProducts(updated);
-    setShowCart(false);
+  };
+  const openModal = () => {
+    if (cart.length === 0) {
+      alert("El carrito está vacío");
+      return;
+    }
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-800">
-          Gestión de Stock
-        </h1>
-        <button
-          className="relative"
-          onClick={() => setShowCart(!showCart)}
-        >
+        <h1 className="text-2xl font-bold text-blue-800">Gestión de Stock</h1>
+        <button className="relative" onClick={() => setShowCart(!showCart)}>
           <ShoppingCart className="text-blue-800 w-8 h-8" />
           {cart.length > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
@@ -144,29 +183,37 @@ const StockDashboardPage = () => {
           <ul>
             {cart.map((item) => (
               <li key={item._id} className="mb-1">
-                {item.brand} {item.model} x{item.quantity} = S/ {item.priceSold * item.quantity}
+                {item.brand} {item.model} x{item.quantity} = S/{" "}
+                {item.priceSold * item.quantity}
               </li>
             ))}
           </ul>
           <p className="mt-2 font-semibold">
-            Total: S/ {cart.reduce((acc, p) => acc + p.quantity * p.priceSold, 0)}
+            Total: S/{" "}
+            {cart.reduce((acc, p) => acc + p.quantity * p.priceSold, 0)}
           </p>
-          <input
-            type="text"
-            placeholder="Método de pago"
-            className="mt-2 p-1 border rounded w-full"
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-          />
-          <button
-            className="mt-2 w-full bg-green-600 text-white p-2 rounded hover:bg-green-500"
-            onClick={handleConfirmSale}
-            disabled={cart.length === 0 || !paymentMethod}
-          >
-            Confirmar Venta
-          </button>
+          <div className="flex gap-2 mt-3">
+            <button
+              className="bg-green-600 text-white px-2 py-1 rounded w-full"
+              onClick={openModal}
+              disabled={cart.length === 0}
+            >
+              Generar Boleta
+            </button>
+          </div>
         </div>
       )}
+
+      {/* Modal Boleta */}
+      <BoletaModal
+        isOpen={isModalOpen}
+        cart={cart}
+        setCart={setCart}
+        boletaNum={boletaNum}
+        setBoletaNum={setBoletaNum}
+        onClose={closeModal}
+        action={handleConfirmSale}
+      />
     </div>
   );
 };
