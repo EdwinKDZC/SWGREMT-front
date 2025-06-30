@@ -10,4 +10,13 @@ const registrarVenta = async (venta) => {
   }
 }
 
-export {registrarVenta};
+const getVentasByPage = async (page) => {
+  try {
+  const resp = await clientAxios.get(`/ventas/getVentasByPage?page=${page}`);
+  return resp.data;
+  } catch (error) {
+    console.error("Error al obtener las ventas por página:", error);
+};
+}
+
+export {registrarVenta,getVentasByPage};

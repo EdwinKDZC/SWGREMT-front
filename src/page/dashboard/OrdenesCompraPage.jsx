@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getOrdenesCompra, getOrdenCompraByPage } from "../../service/ordenCompraService";
+import { getOrdenCompraByPage } from "../../service/ordenCompraService";
 import OrdenCompraModal from "../../components/dashboard/OrdenCompraModal";
 
 export default function OrdenesCompraPage() {

@@ -30,6 +30,8 @@ const SidebarDashboardComponent = () => {
   const documentos = [
     { to: "/dashboard/mis-cotizaciones", icon: <FileText className="w-5 h-5" />, label: "Mis Cotizaciones" },
     { to: "/dashboard/orden-compra", icon: <FilePlus className="w-5 h-5" />, label: "Orden de Compra" },
+    { to: "/dashboard/mis-boletas", icon: <FileText className="w-5 h-5" />, label: "Mis Boletas" },
+    // { to: "/dashboard/mis-facturas", icon: <FileText className="w-5 h-5" />, label: "Mis Facturas" },
   ];
 
   return (
