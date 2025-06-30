@@ -63,10 +63,10 @@ export default function MisCotizacionesPage() {
   };
 
   return (
-    <div className="p-6">
+    <div className="w-full p-6 bg-gray-100 min-h-screen">
       <h2 className="text-2xl font-bold mb-4">Mis Cotizaciones</h2>
 
-      <table className="w-full bg-white shadow rounded mb-4 table-auto">
+      <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="bg-blue-800 text-white">
           <tr>
             <th className="p-2">Proveedor</th>

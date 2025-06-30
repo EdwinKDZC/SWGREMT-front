@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getVentasByPage } from "../../service/ventaService";
+import { getVentaById, getVentasByPage } from "../../service/ventaService";
+import MisBoletasModal from "../../components/dashboard/MisBoletasModal";
 
 const dateFormatter = new Intl.DateTimeFormat("es-PE", {
   year: "numeric",
@@ -11,13 +12,16 @@ export default function MisBoletasPage() {
   const [boletas, setBoletas] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedBoleta, setSelectedBoleta] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchPage = async (newPage) => {
     try {
       const data = await getVentasByPage(newPage);
-        setBoletas(data.ventas);
-        setTotalPages(data.totalPages);
-        setPage(parseInt(data.page));
+      console.log("Datos de ventas:", data);
+      setBoletas(data.ventas);
+      setTotalPages(data.totalPages);
+      setPage(parseInt(data.page));
     } catch (error) {
       console.error("Error al cargar boletas", e);
     }
@@ -27,10 +31,29 @@ export default function MisBoletasPage() {
     fetchPage(1);
   }, []);
 
+  const openModal = async (boleta) => {
+    // setSelectedBoleta(boleta);
+    // setIsModalOpen(true);
+
+    try {
+      const data = await getVentaById(boleta._id);
+      setSelectedBoleta(data);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error al cargar boleta:", error);
+      alert("Ocurrió un error al cargar los detalles de la boleta.");
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedBoleta(null);
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="p-6">
+    <div className="w-full min-h-screen p-6 bg-gray-100">
       <h2 className="text-2xl font-bold mb-4">Mis Boletas</h2>
-      <table className="w-full bg-white shadow rounded mb-4 table-auto">
+      <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
         <thead className="bg-green-800 text-white">
           <tr>
             <th className="p-2">Boleta</th>
@@ -38,7 +61,7 @@ export default function MisBoletasPage() {
             <th className="p-2">Acciones</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-center">
           {boletas.length === 0 ? (
             <tr>
               <td colSpan="4" className="text-center p-4">
@@ -54,7 +77,7 @@ export default function MisBoletasPage() {
                 </td>
                 <button
                   className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
-                  onClick={() => openModal(cot)}
+                  onClick={() => openModal(boleta)}
                 >
                   Ver
                 </button>
@@ -93,6 +116,11 @@ export default function MisBoletasPage() {
           Siguiente
         </button>
       </div>
+      <MisBoletasModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        boleta={selectedBoleta}
+      />
     </div>
   );
 }

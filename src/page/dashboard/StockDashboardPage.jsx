@@ -4,6 +4,7 @@ import { reducirStock } from "../../service/stockService";
 import { ShoppingCart } from "lucide-react";
 import BoletaModal from "../../components/dashboard/BoletaModal";
 import { registrarVenta } from "../../service/ventaService";
+import { createBoleta } from "../../service/boletaService";
 
 const StockDashboardPage = () => {
   const [products, setProducts] = useState([]);
@@ -74,7 +75,28 @@ const StockDashboardPage = () => {
       };
       console.log("Venta a registrar:", venta);
       await registrarVenta(venta);
-      
+
+      // const transformDataBoleta = {
+      //   serie: `B-${String(boletaNum).padStart(4, "0")}`,
+      //   empresa: "SWGREMT S.A.C.",
+      //   ruc: "12345678901",
+      //   direccion: "Av. Ejemplo 123, Lima, Perú",
+      //   telefono: "(01) 234-5678",
+      //   email: "aticona19@gmail.com",
+      //   productos: cart.map((item) => ({
+      //     codigo: item.codigo,
+      //     brand: item.brand,
+      //     model: item.model,
+      //     category: item.category,
+      //     quality: item.quality,
+      //     cantidad: item.quantity,
+      //     precio: item.priceSold,
+      //   })),
+      //   total,
+      //   fecha: new Date().toISOString(),
+      // };
+
+      // await createBoleta(transformDataBoleta);
 
       setCart([]);
       setIsModalOpen(false);

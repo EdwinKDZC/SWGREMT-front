@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { getCatalogSuppliers, getSuppliers } from "../../service/supplierService";
 import { useNavigate } from "react-router-dom";
 
+const dateFormatter = new Intl.DateTimeFormat("es-PE", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
 export default function CotizacionDashboardPage() {
   const [suppliers, setSuppliers] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -75,7 +81,7 @@ export default function CotizacionDashboardPage() {
   }, [suppliers]);
 
   return (
-    <div className="p-4">
+    <div className="w-full p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center">
         <select
           onChange={handleChange}
@@ -98,8 +104,8 @@ export default function CotizacionDashboardPage() {
 
       <div className="mt-6">
         <h3 className="text-lg font-bold mb-4">Productos del Proveedor</h3>
-        <table className="w-full table-auto bg-white shadow rounded">
-          <thead className="bg-blue-800 text-white">
+        <table className="w-full table-auto bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead className="bg-blue-800 text-white">
             <tr>
               <th className="p-2">Marca</th>
               <th className="p-2">Modelo</th>
@@ -119,7 +125,7 @@ export default function CotizacionDashboardPage() {
                 <td className="p-2">{product.tipo}</td>
                 <td className="p-2">{product.calidad}</td>
                 <td className="p-2">S/ {product.precio}</td>
-                <td className="p-2">{product.fechaGarantia}</td>
+                <td className="p-2">{dateFormatter.format(new Date(product.fechaGarantia))}</td>
                 <td className="p-2">
                   <input
                     type="number"
