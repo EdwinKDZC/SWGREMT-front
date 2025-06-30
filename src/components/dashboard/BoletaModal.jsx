@@ -47,7 +47,7 @@ const BoletaModal = ({ cart, setCart, boletaNum, setBoletaNum, isOpen, onClose, 
                   .map(
                     (item) => `
                       <tr>
-                        <td>${item.brand} ${item.model}</td>
+                        <td>${item.brand} ${item.model} ${item.model}</td>
                         <td>${item.quantity}</td>
                         <td>S/ ${item.priceSold.toFixed(2)}</td>
                         <td>S/ ${(item.priceSold * item.quantity).toFixed(2)}</td>

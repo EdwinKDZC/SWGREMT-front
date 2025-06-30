@@ -54,9 +54,6 @@ const StockDashboardPage = () => {
       );
 
       const productosVendidos = cart.map(async (item) => {
-        console.log("productosvendidos", item);
-        console.log("item.codigo", item.codigo);
-        console.log("item.quantity", item.quantity);
         await reducirStock(item.codigo, item.quantity);
 
         return {
@@ -69,15 +66,15 @@ const StockDashboardPage = () => {
           precio: item.priceSold,
         };
       });
-      console.log("productosVendidos", productosVendidos);
       const venta = {
         tipo: "Boleta",
         numero: `B-${String(boletaNum).padStart(4, "0")}`,
-        productos: productosVendidos,
+        productos: await Promise.all(productosVendidos),
         total,
       };
-
+      console.log("Venta a registrar:", venta);
       await registrarVenta(venta);
+      
 
       setCart([]);
       setIsModalOpen(false);
@@ -88,6 +85,7 @@ const StockDashboardPage = () => {
       alert("Error al procesar venta: " + err.message);
     }
   };
+
   const openModal = () => {
     if (cart.length === 0) {
       alert("El carrito está vacío");
@@ -95,6 +93,7 @@ const StockDashboardPage = () => {
     }
     setIsModalOpen(true);
   };
+
   const closeModal = () => {
     setIsModalOpen(false);
   };

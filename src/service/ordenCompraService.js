@@ -46,4 +46,14 @@ const updateEstadoOrden = async (idOrdenCompra, estadoOrden) => {
     }
 }
 
-export { createOrdenCompra, getOrdenesCompra, updateEstadoPago, updateEstadoOrden };
+const getOrdenCompraByPage = async (page) => {
+    try {
+        const response = await ClientAxios.get(`/ordenCompras/getOrdenCompraByPage?page=${page}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching Order Buy by page:", error);
+        throw error;
+    }
+}
+
+export { createOrdenCompra, getOrdenesCompra, updateEstadoPago, updateEstadoOrden, getOrdenCompraByPage };

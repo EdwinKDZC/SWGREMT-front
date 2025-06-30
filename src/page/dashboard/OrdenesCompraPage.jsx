@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
-import { getOrdenesCompra, updateEstadoOrden, updateEstadoPago } from "../../service/ordenCompraService";
+import { getOrdenesCompra, getOrdenCompraByPage } from "../../service/ordenCompraService";
 import OrdenCompraModal from "../../components/dashboard/OrdenCompraModal";
 
 export default function OrdenesCompraPage() {
   const [ordenes, setOrdenes] = useState([]);
   const [selectedOrden, setSelectedOrden] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchOrdenes = async () => {
+  const fetchPage = async (newPage) => {
     try {
-      const data = await getOrdenesCompra();
-      setOrdenes(data);
+      const data = await getOrdenCompraByPage(newPage);
+      setOrdenes(data.ordenes);
+      setTotalPages(data.totalPages);
+      setPage(parseInt(data.page));
     } catch (error) {
-      console.error("Error al obtener órdenes de compra:", error);
+      console.error("Error cargando cotizaciones:", error);
     }
   };
-
   useEffect(() => {
-    fetchOrdenes();
+    fetchPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const openModal = (orden) => {
@@ -31,7 +35,7 @@ export default function OrdenesCompraPage() {
   };
 
   const handleUpdateEstados = async () => {
-    await fetchOrdenes();
+    await fetchPage();
     closeModal();
   };
 
@@ -69,6 +73,25 @@ export default function OrdenesCompraPage() {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center items-center space-x-4 mt-4">
+        <button
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          onClick={() => fetchPage(page - 1)}
+          disabled={page <= 1}
+        >
+          Anterior
+        </button>
+        <span>
+          Página {page} de {totalPages}
+        </span>
+        <button
+          className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+          onClick={() => fetchPage(page + 1)}
+          disabled={page >= totalPages}
+        >
+          Siguiente
+        </button>
+      </div>
 
       <OrdenCompraModal
         isOpen={isModalOpen}
