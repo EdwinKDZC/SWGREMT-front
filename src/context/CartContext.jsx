@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 const CartContext = createContext();
 
@@ -8,36 +8,31 @@ export const CartProvider = ({ children }) => {
   const addToCart = (product) => {
     setCartItems((prevItems) => {
       const existingProduct = prevItems.find((item) => item._id === product._id);
+      const updatedItems = existingProduct
+        ? prevItems.map((item) =>
+            item._id === product._id
+              ? { ...item, cantidad: item.cantidad + 1 }
+              : item
+          )
+        : [...prevItems, { ...product, cantidad: 1 }];
 
-      if (existingProduct) {
-        // Si ya existe, aumentar cantidad
-        return prevItems.map((item) =>
-          item._id === product._id
-            ? { ...item, cantidad: item.cantidad + 1 }
-            : item
-        );
-      } else {
-        // Si no existe, agregar nuevo producto con cantidad inicial
-        return [...prevItems, { ...product, cantidad: 1 }];
-      }
+      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+      return updatedItems;
     });
   };
 
   const removeFromCart = (productId) => {
     setCartItems((prevItems) => {
-      const existingProduct = prevItems.find((item) => item._id === productId);
-
-      if (existingProduct && existingProduct.cantidad > 1) {
-        // Si hay más de uno, reducir cantidad
-        return prevItems.map((item) =>
+      const updatedItems = prevItems
+        .map((item) =>
           item._id === productId
             ? { ...item, cantidad: item.cantidad - 1 }
             : item
-        );
-      } else {
-        // Si hay solo uno, eliminar
-        return prevItems.filter((item) => item._id !== productId);
-      }
+        )
+        .filter((item) => item.cantidad > 0);
+
+      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+      return updatedItems;
     });
   };
 
@@ -47,7 +42,7 @@ export const CartProvider = ({ children }) => {
 
   return (
     <CartContext.Provider
-      value={{ cartItems, addToCart, removeFromCart, clearCart }}
+      value={{ cartItems, setCartItems, addToCart, removeFromCart, clearCart }}
     >
       {children}
     </CartContext.Provider>

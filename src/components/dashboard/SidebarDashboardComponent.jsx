@@ -44,7 +44,7 @@ const SidebarDashboardComponent = () => {
       <div>
         <div className="flex items-center justify-between mb-6">
           {!isCollapsed && (
-            <h2 className="text-xl font-bold text-blue-600">Importadora Móvil</h2>
+            <NavLink to="/" className="text-xl font-bold text-blue-600">Importadora Móvil</NavLink>
           )}
           <button onClick={toggleCollapse} className="text-gray-500 hover:text-blue-600">
             {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}

@@ -1,22 +1,25 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./page/landing/HomePage";
-import AboutPage from "./page/landing/AboutPage";
-import ProductsPage from "./page/landing/ProductsPage";
-import LandingLayout from "./layout/LandingLayout";
-import AuthLayout from "./layout/AuthLayout";
-import LoginPage from "./page/auth/LoginPage";
-import DashboardLayout from "./layout/DashboardLayout";
-import HomeDashboardPage from "./page/dashboard/HomeDashboardPage";
-import ProductDashboardPage from "./page/dashboard/ProductDashboardPage";
 import { CartProvider } from "./context/CartContext";
-import CartPage from "./page/landing/CartPage";
-import StockDashboardPage from "./page/dashboard/StockDashboardPage";
-import SupplierDashboardPage from "./page/dashboard/SupplierDashboardPage";
-import CotizacionDashboardPage from "./page/dashboard/CotizacionDashboardPage";
+import AuthLayout from "./layout/AuthLayout";
+import DashboardLayout from "./layout/DashboardLayout";
+import LandingLayout from "./layout/LandingLayout";
+import LoginPage from "./page/auth/LoginPage";
 import CarritoCotizacionPage from "./page/dashboard/CarritoCotizacionPage";
+import CotizacionDashboardPage from "./page/dashboard/CotizacionDashboardPage";
+import HomeDashboardPage from "./page/dashboard/HomeDashboardPage";
+import MisBoletasPage from "./page/dashboard/MisBoletasPage";
 import MisCotizacionesPage from "./page/dashboard/MisCotizacionesPage";
 import OrdenesCompraPage from "./page/dashboard/OrdenesCompraPage";
-import MisBoletasPage from "./page/dashboard/MisBoletasPage";
+import ProductDashboardPage from "./page/dashboard/ProductDashboardPage";
+import StockDashboardPage from "./page/dashboard/StockDashboardPage";
+import SupplierDashboardPage from "./page/dashboard/SupplierDashboardPage";
+import AboutPage from "./page/landing/AboutPage";
+import CartPage from "./page/landing/CartPage";
+import ConfirmationPage from "./page/landing/ConfirmationPage";
+import HomePage from "./page/landing/HomePage";
+import InfoPage from "./page/landing/InfoPage";
+import PaymentPage from "./page/landing/PaymentPage";
+import ProductsPage from "./page/landing/ProductsPage";
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
             <Route path="about" element={<AboutPage />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="cart" element={<CartPage />} />
+            <Route path="info" element={<InfoPage />} />
+            <Route path="payment" element={<PaymentPage />} />
+            <Route path="confirmation" element={<ConfirmationPage />} />
           </Route>
           <Route path="/" element={<AuthLayout />}>
             <Route index path="login" element={<LoginPage />} />
