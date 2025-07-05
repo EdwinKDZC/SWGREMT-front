@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Wallet, ShoppingCart, TrendingUp, BadgeEuro } from "lucide-react";
+import  Background  from '../../assets/img/logobienvenida.png';
 
 export default function Dashboard() {
   const [topSelling, setTopSelling] = useState([]);
@@ -15,15 +16,15 @@ export default function Dashboard() {
   return (
     <main className="p-6 bg-gray-100 min-h-screen w-full">
       <h1 className="text-2xl font-bold mb-4">Dashboard Importadora Móvil</h1>
-        
+        <img src={ Background } alt="" className='w-full h-[40rem]' />
       {/* Métricas principales */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <Card title="Ingresos" value={`€ ${earnings.ingresos.toFixed(2)}`} icon={<Wallet className="w-6 h-6 text-green-600" />} />
         <Card title="Beneficios" value={`€ ${earnings.ganancia.toFixed(2)}`} icon={<TrendingUp className="w-6 h-6 text-emerald-600" />} />
         <Card title="Balance" value={`€ ${(earnings.ingresos - earnings.ganancia).toFixed(2)}`} icon={<BadgeEuro className="w-6 h-6 text-red-600" />} />
-      </div>
+      </div> */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Box title="Productos más vendidos">
           {topSelling.length === 0 
             ? <p className="text-sm text-gray-500">Sin datos</p> 
@@ -34,9 +35,9 @@ export default function Dashboard() {
               </div>
             ))
           }
-        </Box>
+        </Box> */}
 
-        <Box title="Stock agregado recientemente">
+        {/* <Box title="Stock agregado recientemente">
           {recentStock.length === 0 
             ? <p className="text-sm text-gray-500">Sin datos</p> 
             : recentStock.map(order => (
@@ -48,28 +49,28 @@ export default function Dashboard() {
                     <span>{prod.cantidad} und</span>
                   </div>
                 )}
-              </div>
-            ))
+              </div> */}
+            {/* ))
           }
         </Box>
-      </div>
+      </div> */}
     </main>
   );
 }
 
-const Card = ({ title, value, icon }) => (
-  <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
-    <div>
-      <p className="text-sm text-gray-500">{title}</p>
-      <p className="text-xl font-semibold">{value}</p>
-    </div>
-    {icon}
-  </div>
-);
+// const Card = ({ title, value, icon }) => (
+//   <div className="bg-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+//     <div>
+//       <p className="text-sm text-gray-500">{title}</p>
+//       <p className="text-xl font-semibold">{value}</p>
+//     </div>
+//     {icon}
+//   </div>
+// );
 
-const Box = ({ title, children }) => (
-  <div className="bg-white p-4 rounded-2xl shadow-sm">
-    <h2 className="text-lg font-bold mb-2">{title}</h2>
-    <div className="space-y-2 max-h-60 overflow-y-auto">{children}</div>
-  </div>
-);
+// const Box = ({ title, children }) => (
+//   <div className="bg-white p-4 rounded-2xl shadow-sm">
+//     <h2 className="text-lg font-bold mb-2">{title}</h2>
+//     <div className="space-y-2 max-h-60 overflow-y-auto">{children}</div>
+//   </div>
+// );
